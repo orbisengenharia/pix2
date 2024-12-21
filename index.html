@@ -3,33 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Câmera Teste</title>
+    <title>Captura e Envio de Imagem</title>
 </head>
 <body>
-    <h1>Acesse sua câmera</h1>
+    <h1>Captura e Envio de Imagem</h1>
     <video id="video" autoplay></video>
     <button id="capture">Capturar Foto</button>
     <canvas id="canvas" style="display: none;"></canvas>
+    <p id="link"></p>
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('capture');
-        const context = canvas.getContext('2d');
+        // Configuração do ImgBB
+        const apiKey = 'b6147e113acc9c24966a9c0f888f0242'; // Sua API Key
 
-        // Solicitar acesso à câmera
+        // Acessar a câmera
+        const video = document.getElementById('video');
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
             })
-            .catch(err => console.error('Erro ao acessar a câmera:', err));
+            .catch(err => console.error('Erro ao acessar câmera:', err));
 
-        // Capturar a imagem e exibi-la
-        captureButton.addEventListener('click', () => {
+        // Capturar imagem e enviar ao ImgBB
+        document.getElementById('capture').addEventListener('click', () => {
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = canvas.toDataURL('image/png'); // Converter para base64
-            console.log('Imagem capturada:', imageData);
+
+            // Converter imagem em Base64
+            const imageData = canvas.toDataURL('image/png');
+
+            // Enviar imagem ao ImgBB
+            const formData = new FormData();
+            formData.append('key', apiKey);
+            formData.append('image', imageData.split(',')[1]); // Remove "data:image/png;base64,"
+
+            fetch('https://api.imgbb.com/1/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Imagem enviada:', result.data.url);
+                const link = document.getElementById('link');
+                link.innerHTML = `<a href="${result.data.url}" target="_blank">Ver Imagem</a>`;
+                alert('Imagem enviada com sucesso!');
+            })
+            .catch(error => console.error('Erro ao enviar imagem:', error));
         });
     </script>
 </body>

